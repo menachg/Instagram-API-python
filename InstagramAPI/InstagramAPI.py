@@ -941,3 +941,24 @@ class InstagramAPI:
             except KeyError as e:
                 break
         return liked_items
+    
+    def getUserId(self,profileName):
+        req=requests.get("https://www.instagram.com/"+profileName+"?__a=1")
+        return (json.loads(req.text))["user"]["id"]
+
+    def sendMessage(self, target_user, msgText):
+        target_user = '[[{}]]'.format(','.join([target_user]))
+        url = 'direct_v2/threads/broadcast/text/'
+
+        data = {
+            'text': msgText,
+            '_uuid': self.uuid,
+            '_csrftoken': self.token,
+            'recipient_users': target_user,
+            '_uid': self.username_id,
+            'action': 'send_item',
+            'client_context': self.generateUUID(True)}
+
+        return self.SendRequest(url, data)
+    #example: api.sendMessage(target_id_here,messagetext here)
+
